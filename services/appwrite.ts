@@ -43,14 +43,20 @@ export const updateSearchCount = async (query: string, movie: Movie) => {
 };
 
 
-export const getTrendingMovies = async () => {
+export const getTrendingMovies = async (): Promise<TrendingMovie[]> => {
     try {
         const result = await database.listDocuments(DATABASE_ID, COLLECTION_ID, [
       Query.limit(5),
       Query.orderDesc("count")
     ]);
 
-    return result.documents
+    return result.documents.map(doc => ({
+      searchTerm: doc.searchTerm,
+      movie_id: doc.movie_id,
+      title: doc.title,
+      count: doc.count,
+      poster_url: doc.poster_url
+    }));
     } catch (error) {
         console.log(error)
         throw error
